@@ -36,6 +36,8 @@ def read_saved_scores():
 
 # saves the entered students data to a csv file
 def save_to_file():
+    add_score()
+
     with open('scores.csv', mode='w+', newline='') as score_file:
         headers = ['Full Name', 'Matric Number', 'Score']
 
@@ -46,6 +48,9 @@ def save_to_file():
             writer.writerow({'Full Name': name, 'Matric Number': matric, 'Score': score}) # writes the values
 
 def add_score():
+
+    if(len(score_var.get()) < 1):
+        return False
 
     global total_score
     global total_students
@@ -73,13 +78,24 @@ def calculate_mean() -> float:
     global mean_score
     global total_score
     global total_students
+    global scores_list
+
+    # convert all scores to float
+    scores_list = [float(score) for score in scores_list] # map(lambda score: float(score), scores_list)
+
+    i = 0
+
+    for num in scores_list:
+        i += num
+    
 
     try:
-        mean_score  = total_score / total_students
+        mean_score  = i / len(scores_list)
     except:
+        print('lkfnk')
         pass
 
-    return mean_score
+    return '%.2f' % mean_score # format to 2 dp
 
 def maximum_score() -> float:
     print(f"scores: {scores_list}")
@@ -122,6 +138,9 @@ def get_failed_student():
 def show_popup():
    global scores_list
 
+   # convert all scores to float
+   scores_list = [float(score) for score in scores_list] # map(lambda score: float(score), scores_list)
+
    top = Toplevel(win)
    top.geometry("600x500")
    top.title("Result Window")
@@ -134,9 +153,6 @@ def show_popup():
 
    list1 = Listbox(top, yscrollcommand=sb.set)
    list2 = Listbox(top, yscrollcommand=sb2.set)
-
-   # convert all scores to float
-   scores_list = [float(score) for score in scores_list] # map(lambda score: float(score), scores_list)
 
    # mean score
    Label(top, text= f"{calculate_mean()}", font=('Calibri 15 bold',)).place(x=10,y=20)
